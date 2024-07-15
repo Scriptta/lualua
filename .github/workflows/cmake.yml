@@ -1,4 +1,3 @@
-
 on:
   push:
     branches: [ main ]
@@ -15,7 +14,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         submodules: recursive
 
@@ -25,3 +24,19 @@ jobs:
       run: |
         cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.type}}
         cmake --build ${{github.workspace}}/build --config ${{matrix.type}}
+        ls ${{github.workspace}}/build
+        
+    - name: Upload Artifact
+      if: matrix.os == 'windows-latest'
+      uses: actions/upload-artifact@v4
+      with:
+        name: Release_Windows
+        path: ${{github.workspace}}/build/Release/luauDec.exe
+
+    - name: Upload Artifact
+      if: matrix.os == 'macos-latest'
+      uses: actions/upload-artifact@v4
+      with:
+        name: Release_MacOS
+        path: ${{github.workspace}}/build/luauDec
+        
